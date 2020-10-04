@@ -11,18 +11,19 @@ class Menu():
         open(self.users_path, "a")
         open(self.highscores_path, "a")
 
-        self.Main(self.users_path, self.highscores_path)
+        self.main(self.users_path, self.highscores_path)
 
-    def Main(self, users_path, highscores_path):
+    def main(self, users_path, highscores_path):
         if os.stat(self.users_path).st_size == 0:
             print("\nUsers not found. Creating new user...")
-            self.Create_user(self.users_path)
+            self.create_user(self.users_path)
+            print("\nNew user created.")
 
-        userlist = self.Parse_file(users_path)
+        userlist = self.parse_file(users_path)
 
-        self.Auth(userlist)
+        self.auth(userlist)
 
-    def Auth(self, userlist):
+    def auth(self, userlist):
         self.authenticated_users = []
 
         for i in range(5):
@@ -40,14 +41,14 @@ class Menu():
         print("\nAuthentication failed.")
         exit()
 
-    def Create_user(self, users_path):
+    def create_user(self, users_path):
         new_username = input("\nNew username: ")
         new_password = getpass("New password: ")
 
         with open(users_path, "a") as f:
             f.write(new_username + ":" + bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode())
 
-    def Parse_file(self, filepath):
+    def parse_file(self, filepath):
         with open(filepath, "r") as f:
             data = f.read()
         return [line.split(":") for line in data.split("\n")]
