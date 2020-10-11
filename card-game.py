@@ -8,23 +8,29 @@ class Menu():
         self.users_path = "users.txt"
         self.highscores_path = "highscores.txt"
 
-        open(self.users_path, "a")
-        open(self.highscores_path, "a")
+        self.main()
 
-        self.main(self.users_path, self.highscores_path)
+    def main(self):
+        print("\nWelcome!\n1. Login\n2. Show Leaderboard\n3. Exit")
+        while True:
+            selector = input(">>> ")
+            if selector == "1":
+                self.auth()
+                break
+            elif selector == "2":
+                print("This feature is yet to be implemented")  # This needs to be implemented
+            elif selector == "3":
+                exit()
+            else:
+                print("Invalid input. Please, try again.")
 
-    def main(self, users_path, highscores_path):
-        if os.stat(self.users_path).st_size == 0:
+    def auth(self):
+        if not os.path.exists(self.users_path):
             print("\nUsers not found. Creating new user...")
-            self.create_user(self.users_path)
+            self.create_user()
             print("\nNew user created.")
 
-        userlist = self.parse_file(users_path)
-
-        self.auth(userlist)
-
-    def auth(self, userlist):
-        self.authenticated_users = []
+        userlist = self.parse_file(self.users_path)
 
         for i in range(5):
             username = input("\nUsername: ")
@@ -32,20 +38,19 @@ class Menu():
 
             for user in userlist:
                 if username == user[0] and bcrypt.checkpw(password.encode(), user[1].encode()):
-                    self.authenticated_users.append(user)
                     print("\nAuthenticated.")
                     return True
                 else:
                     continue
 
         print("\nAuthentication failed.")
-        exit()
+        return False
 
-    def create_user(self, users_path):
+    def create_user(self):
         new_username = input("\nNew username: ")
         new_password = getpass("New password: ")
 
-        with open(users_path, "a") as f:
+        with open(self.users_path, "a") as f:
             f.write(new_username + ":" + bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode())
 
     def parse_file(self, filepath):
