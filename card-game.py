@@ -69,36 +69,11 @@ class Game():
         self.player2 = Player(input("Player 2 name: "))
         self.deck = Deck()
 
-        self.main()
-
-    def main(self):
-        print("\nGame start!\n")
-        while self.deck.cards:
-            input("Player 1, choose! ")
-            card = self.deck.choose_card()
-            print(card[1].capitalize(), str(card[0]))
-            input("Player 2, choose! ")
-            card = self.deck.choose_card()
-            print(card[1].capitalize(), str(card[0]))
-
-    # This needs a winner determiner function. A recursive solution with colours would probably be best. At this point, this is fucked.
-
 
 class Deck():
     def __init__(self):
         self.cards = [(number, colour) for number in range(1, 11) for colour in ["red", "yellow", "black"]]
         shuffle(self.cards)
-        self.buffer = []
-
-    def choose_card(self):
-        card = self.cards[0]
-        self.buffer.append(card)
-        self.cards.remove(card)
-        return card
-
-    def move_cards(self, src_deck, dst_deck):
-        dst_deck.append(*src_deck)
-        src_deck.clear()
 
 
 class Player():
