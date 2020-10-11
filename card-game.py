@@ -1,6 +1,35 @@
-import os
-import bcrypt
+from os import path
+from bcrypt import hashpw, checkpw, gensalt
 from getpass import getpass
+from random import shuffle, choice
+
+
+class Player():
+    def __init__(self, player_name: str):
+        self.name = player_name
+        self.hand = []
+
+
+class Deck():
+    def __init__(self):
+        self.cards = [(number, colour) for number in range(1, 11) for colour in ["red", "yellow", "black"]]
+        shuffle(self.cards)
+        self.card_buffer = []
+
+    def choose_card(self):
+        card = choice(self.cards[0])
+        self.move_card(card, self.card_buffer)
+        self.cards.remove(card)
+        return card
+
+    def move_cards(self, src_deck: list, dst_deck: list):
+        dst_deck.append(*src_deck)
+        src_deck.clear()
+
+
+class Game():
+    def __init__(self, player1: Player, player2: Player, deck: Deck):
+        pass
 
 
 class Menu():
@@ -25,7 +54,7 @@ class Menu():
                 print("Invalid input. Please, try again.")
 
     def auth(self):
-        if not os.path.exists(self.users_path):
+        if not path.exists(self.users_path):
             print("\nUsers not found. Creating new user...")
             self.create_user()
             print("\nNew user created.")
@@ -37,7 +66,7 @@ class Menu():
             password = getpass("Password: ")
 
             for user in userlist:
-                if username == user[0] and bcrypt.checkpw(password.encode(), user[1].encode()):
+                if username == user[0] and checkpw(password.encode(), user[1].encode()):
                     print("\nAuthenticated.")
                     return True
                 else:
@@ -51,13 +80,14 @@ class Menu():
         new_password = getpass("New password: ")
 
         with open(self.users_path, "a") as f:
-            f.write(new_username + ":" + bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode())
+            f.write(new_username + ":" + hashpw(new_password.encode(), gensalt()).decode())
 
-    def parse_file(self, filepath):
+    def parse_file(self, filepath: str):
         with open(filepath, "r") as f:
             data = f.read()
         return [line.split(":") for line in data.split("\n")]
 
 
 if __name__ == "__main__":
-    Menu()
+    # Menu()
+    deck = Deck()
